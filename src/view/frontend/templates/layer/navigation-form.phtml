@@ -310,8 +310,8 @@ use Magento\Framework\View\Element\Template;
                         if (error.name !== 'AbortError') {
                             // Something went wrong, try to navigate to the selected filter
                             console.error('Error:', error);
-                            return;
                             this.defaultHandler(event);
+                            return;
                         } else {
                             console.log('Aborted:', error);
                         }
