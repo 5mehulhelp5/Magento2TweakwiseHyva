@@ -21,6 +21,7 @@ use Magento\Swatches\ViewModel\Product\Renderer\Configurable as ConfigurableView
 $configurableViewModel = $viewModels->require(ConfigurableViewModel::class);
 
 $swatchData = $block->getSwatchData();
+$hasHiddenItems = $block->hasHiddenItems();
 
 if (!$swatchData['swatches']) {
     return;
@@ -31,6 +32,11 @@ if (!$swatchData['swatches']) {
 <script>
     function initLayeredSwatch_<?= /*@noEscapee */ $swatchData['attribute_code'] ?>() {
         return {
+            moreItemsShow: false,
+            toggleShowMore(show) {
+                this.moreItemsShow = show;
+            },
+
             getSwatchType(typeNumber) {
                 switch (typeNumber) {
                     case "1":
@@ -107,6 +113,7 @@ if (!$swatchData['swatches']) {
                 <a <?= /* @noEscape */$block->renderAnchorHtmlTagAttributes($item); ?>
                         aria-label="<?= $label['label'] ?>"
                         class="swatch-option-link-layered swatch-option cursor-pointer select-none m-1 flex border justify-center"
+                        :class="{ 'block': moreItemsShow, 'hidden': '<?= $escaper->escapeHtmlAttr($block->itemDefaultHidden($item))?>' && !moreItemsShow }"
                 >
                     <?php $cssId = $item->getCssId(); ?>
 
@@ -142,5 +149,19 @@ if (!$swatchData['swatches']) {
     <?php if ($configurableViewModel->getShowSwatchTooltip()): ?>
         <?= /* @noEscape */
         $block->getBlockHtml('product.swatch.tooltip'); ?>
+    <?php endif; ?>
+
+    <?php if ($hasHiddenItems): ?>
+        <a href="#" class="more-items underline cursor-pointer"
+           @click.prevent="toggleShowMore(true, 0)"
+           :class="{ 'hidden': moreItemsShow }"
+           x-ref="moreItems"
+        ><?= $escaper->escapeHtml(__($block->getMoreItemText())) ?></a>
+        <a href="#" class="less-items underline cursor-pointer"
+           x-cloak
+           @click.prevent="toggleShowMore(false, 0)"
+           :class="{ 'block': moreItemsShow, 'hidden': !moreItemsShow }"
+           x-ref="lessItems"
+        ><?= $escaper->escapeHtml(__($block->getLessItemText())) ?></a>
     <?php endif; ?>
 </div>
