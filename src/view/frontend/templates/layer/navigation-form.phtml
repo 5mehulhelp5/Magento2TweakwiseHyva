@@ -152,12 +152,13 @@ use Magento\Framework\View\Element\Template;
              */
             findHref(aElement) {
                 let href = aElement.getAttribute('href');
+                let noAjax = aElement.data('no-ajax');
                 if (this.seoEnabled) {
                     const seoHref = aElement.dataset.seoHref;
                     href = seoHref ? seoHref : href;
                 }
 
-                if (this.urlStrategy === 'queryparameter') {
+                if (this.urlStrategy === 'queryparameter' && !noAjax) {
                     let url = new URL(href, window.location.origin);
                     url.search = this.getFilterParameters();
 
