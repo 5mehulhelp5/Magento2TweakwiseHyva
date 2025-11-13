@@ -152,7 +152,7 @@ use Magento\Framework\View\Element\Template;
              */
             findHref(aElement) {
                 let href = aElement.getAttribute('href');
-                let noAjax = aElement.data('no-ajax');
+                let noAjax = aElement.getAttribute('data-no-ajax');
                 if (this.seoEnabled) {
                     const seoHref = aElement.dataset.seoHref;
                     href = seoHref ? seoHref : href;
