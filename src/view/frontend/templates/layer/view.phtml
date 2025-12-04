@@ -69,6 +69,8 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                 <?php if ($block->getLayer()->getState()->getFilters()): ?>
                     <div class="block-actions filter-actions">
                         <a href="<?=$escaper->escapeUrl($block->getClearUrl())?>"
+                           tabindex="0"
+                           role="button"
                            class="action clear filter-clear text-xs text-primary underline hover:text-primary-darker"><span><?= $escaper->escapeHtml(__('Clear All'))?></span></a>
                     </div>
                 <?php endif; ?>
@@ -88,8 +90,9 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                                     : 'true'
                                 ) ?>
 
-                                <div class="filter-option card my-4 pb-0 <?= $escaper->escapeHtmlAttr($filter->getCssClass())?>"
+                                <fieldset class="filter-option card my-4 pb-0 <?= $escaper->escapeHtmlAttr($filter->getCssClass())?>"
                                      x-data="{ open: <?= $escaper->escapeHtmlAttr($filterActive) ?>, showTooltip: false }">
+                                    <legend class="sr-only"><?= $escaper->escapeHtml(__($filter->getName()))?></legend>
                                     <div class="filter-options-title flex justify-between items-center border-container pb-2 <?= $escaper->escapeHtmlAttr($filter->isCollapsible()) ? 'cursor-pointer hover:text-secondary-darker' : '' ?>"
                                          :class="{ 'border-b': open }"
                                          <?= $filter->isCollapsible() ? '@click="open = !open"' : ''?>>
@@ -135,7 +138,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                                         <?=/* @noEscape */
                                         $block->getChildBlock('renderer')->render($filter)?>
                                     </div>
-                                </div>
+                                </fieldset>
 
                                 <?php if ($renderFilterButton): ?>
                                     <div class="show-items-link">
@@ -189,6 +192,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                         .sort((a, b) => a.dataset[sortType].localeCompare(b.dataset[sortType],undefined,{numeric: true}))
                         .forEach((item) => {
                             items.appendChild(item);
+                            item.focus();
                         });
                 },
                 toggleShowMore(moreItemsShow, hasAlternateSort) {
@@ -241,6 +245,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                         if(value.length === 0) {
                             moreItems.style.display = '';
                             lessItems.style.display = '';
+
                         } else {
                             moreItems.style.display = 'none';
                             lessItems.style.display = 'none';
