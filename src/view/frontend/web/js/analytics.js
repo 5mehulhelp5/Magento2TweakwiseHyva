@@ -1,11 +1,9 @@
 function Tweakwise_Hyva_Analytics(config) {
     return {
-        value: config.value,
-        type: config.type,
+        values: config.values,
         bindItemClickEventsConfig: config.bindItemClickEventsConfig,
         init() {
-            let bodyData = { type: this.type };
-            bodyData.value = this.value;
+            let bodyData = { values: this.values };
 
             fetch('/tweakwise/ajax/analytics', {
                 method: 'POST',
