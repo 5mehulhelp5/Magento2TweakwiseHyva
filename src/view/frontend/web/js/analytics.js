@@ -1,9 +1,9 @@
 function Tweakwise_Hyva_Analytics(config) {
     return {
-        values: config.values,
+        eventData: config.eventData,
         bindItemClickEventsConfig: config.bindItemClickEventsConfig,
         init() {
-            let bodyData = { values: this.values };
+            let bodyData = { eventData: this.eventData };
 
             fetch('/tweakwise/ajax/analytics', {
                 method: 'POST',
@@ -80,10 +80,13 @@ function handleItemClick(event, config) {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    values: {
-                        itemclick: productId
-                    },
-                    requestId: this.twRequestId
+                    eventData: [
+                        {
+                            type: 'itemclick',
+                            value: productId,
+                            requestId: this.twRequestId
+                        }
+                    ],
                 })
             }).catch((error) => {
                 console.error('Error sending analytics event', error);

@@ -8,14 +8,14 @@ use Magento\Framework\Escaper;
 /** @var \Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics $viewModel */
 $viewModel = $block->getData('viewModel');
 $analyticsTypes = $block->getData('analyticsTypes');
-$values = $viewModel->getValues($analyticsTypes);
+$eventData = $viewModel->getEventData($analyticsTypes);
 ?>
 
 <div x-data='{
-    values: <?= $values ?>
+    eventData: <?= $eventData ?>
 }' x-init='() => {
     Tweakwise_Hyva_Analytics({
-        values: values
+        eventData: eventData
     }).init();
 }'>
 </div>
