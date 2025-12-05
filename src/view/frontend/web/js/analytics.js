@@ -80,8 +80,9 @@ function handleItemClick(event, config) {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({
-                    type: 'itemclick',
-                    value: productId,
+                    values: {
+                        itemclick: productId
+                    },
                     requestId: this.twRequestId
                 })
             }).catch((error) => {
