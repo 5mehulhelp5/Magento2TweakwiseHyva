@@ -4,20 +4,32 @@
 /** @var  Escaper $escaper */
 
 use Magento\Framework\Escaper;
+use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 
 /** @var \Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics $viewModel */
 $viewModel = $block->getData('viewModel');
 $analyticsType = $block->getData('analyticsType');
-$value = $viewModel->getValue($analyticsType);
+$value = $viewModel->getValue((string) $analyticsType);
+
+/** @var NavigationConfig $tweakwiseNavigationConfig */
+$tweakwiseNavigationConfig = $block->getData('tweakwise_navigation_config');
+$jsFormConfig = $tweakwiseNavigationConfig ? json_decode($tweakwiseNavigationConfig->getJsFormConfig()) : [];
 ?>
 
 <div x-data="{
-    value: '<?= $escaper->escapeHtmlAttr($value); ?>',
-    type: '<?= $escaper->escapeHtmlAttr($analyticsType); ?>'
+    value: '<?= $escaper->escapeHtmlAttr($value ?? ''); ?>',
+    type: '<?= $escaper->escapeHtmlAttr($analyticsType ?? ''); ?>',
+    'bindItemClickEventsConfig': {
+        'productListSelector': '.products.wrapper',
+        'productSelector': '.product-item',
+        'analyticsEndpoint': '<?= /* @noEscape */ $jsFormConfig->tweakwiseNavigationForm->analyticsEndpoint ?? ''; ?>',
+        'twRequestId': '<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->twRequestId ?? ''); ?>'
+    }
 }" x-init="() => {
     Tweakwise_Hyva_Analytics({
         value: value,
-        type: type
+        type: type,
+        bindItemClickEventsConfig: bindItemClickEventsConfig
     }).init();
 }">
 </div>
