@@ -38,11 +38,12 @@ $hasAlternateSortOrder = $block->hasAlternateSortOrder();
                     <?php if ($block->showCheckbox()): ?>
                         <label for="<?= $escaper->escapeHtmlAttr($cssId) ?>" class="block m-0 font-normal flex w-full">
                             <input id="<?= $escaper->escapeHtmlAttr($cssId) ?>"
-                                   name="<?= $escaper->escapeHtmlAttr($item->getFilter()->getFacet()->getFacetSettings()->getUrlKey()) ?>[]"
+                                   name="<?= $escaper->escapeHtmlAttr($item->getFilter()->getUrlKey()) ?>[]"
                                    type="checkbox" <?= ($item->isSelected() ? 'checked="checked"' : '') ?>
                                    value="<?= $escaper->escapeHtmlAttr($item->getLabel()) ?>"
                                    class="block w-4 h-4 mr-2 mt-1"
                                    tabindex="0"
+                                   aria-labelledby="<?= $escaper->escapeHtmlAttr($item->getFilter()->getUrlKey()) ?> <?= $escaper->escapeHtmlAttr($cssId) ?>"
                             >
 
                             <?= $escaper->escapeHtml($block->getItemPrefix()) ?>

@@ -92,7 +92,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
 
                                 <fieldset class="filter-option card my-4 pb-0 <?= $escaper->escapeHtmlAttr($filter->getCssClass())?>"
                                      x-data="{ open: <?= $escaper->escapeHtmlAttr($filterActive) ?>, showTooltip: false }">
-                                    <legend class="sr-only"><?= $escaper->escapeHtml(__($filter->getName()))?></legend>
+                                    <legend id="<?= $escaper->escapeHtmlAttr($filter->getUrlKey()) ?>" class="sr-only"><?= $escaper->escapeHtml($filter->getName())?></legend>
                                     <div class="filter-options-title flex justify-between items-center border-container pb-2 <?= $escaper->escapeHtmlAttr($filter->isCollapsible()) ? 'cursor-pointer hover:text-secondary-darker' : '' ?>"
                                          :class="{ 'border-b': open }"
                                          <?= $filter->isCollapsible() ? '@click="open = !open"' : ''?>>
@@ -104,6 +104,9 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                                                 <span class="ml-2 mt-1 block relative tooltip">
                                                     <span @mouseover="showTooltip = true"
                                                           @mouseleave="showTooltip = false"
+                                                          tabindex="0"
+                                                          aria-label="<?= $escaper->escapeHtmlAttr(__('More info')) ?>"
+                                                          aria-describedby="<?= $escaper->escapeHtmlAttr($filter->getUrlKey()) ?>-tooltip"
                                                           class="flex justify-center items-center relative text-blue-900 w-5 h-5 cursor-pointer tooltip-toggle">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
                                                              viewBox="0 0 18 18" fill="currentColor">
@@ -114,6 +117,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                                                     </span>
                                                     <span x-cloak
                                                           x-show.transition.origin.top="showTooltip"
+                                                            id="<?= $escaper->escapeHtmlAttr($filter->getUrlKey()) ?>-tooltip"
                                                           class="absolute bottom-0 mb-8 block bg-gray-900 bg-opacity-95 rounded p-2 text-white text-xs font-normal absolute w-32 z-10 text-left tooltip-content"><?= $escaper->escapeHtml($tooltip)?></span>
                                                 </span>
                                             <?php endif; ?>
@@ -198,6 +202,21 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                 toggleShowMore(moreItemsShow, hasAlternateSort) {
                     this.moreItemsShow = moreItemsShow
                     this.sortItems(hasAlternateSort)
+
+                    // Focus the first visible item
+                    this.$nextTick(() => {
+                        const items = this.$refs.items;
+                        if (!items) return;
+                        const firstVisible = Array.from(items.children).find(
+                            item => item.style.display !== 'none'
+                        );
+
+                        if (firstVisible) {
+                            // Try to focus input or anchor
+                            const input = firstVisible.querySelector('input, a, button');
+                            if (input) input.focus();
+                        }
+                    });
                 }
             }
         }
