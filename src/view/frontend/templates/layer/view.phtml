@@ -124,7 +124,13 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                                         </span>
 
                                         <?php if ($filter->isCollapsible()): ?>
-                                            <span class="py-1 px-1 rounded border border-container">
+                                            <span
+                                                class="py-1 px-1 rounded border border-container"
+                                                :tabindex="!open ? '0' : '-1'"
+                                                role="button"
+                                                @keydown.enter.prevent="open = !open"
+                                                aria-label="<?= $escaper->escapeHtmlAttr(__('Expand filter options for %1', $filter->getName())) ?>"
+                                            >
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                     xmlns="http://www.w3.org/2000/svg"
                                                     class="transition-transform transform duration-300 ease-in-out text-primary"
@@ -148,9 +154,10 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                                     <div class="show-items-link">
                                         <button type="button"
                                                 class="btn btn-primary btn-block js-btn-filter"
+                                                aria-label="<?= $escaper->escapeHtmlAttr(__('Apply filters')) ?>"
                                         >
-                                            <?= $escaper->escapeHtml(__('Show <span>%1</span> items',
-                                                $block->getLayer()->getProductCount()));?>
+                                            <?= $escaper->escapeHtml(__('Show items')); ?>
+
                                         </button>
                                     </div>
                                 <?php endif; ?>
