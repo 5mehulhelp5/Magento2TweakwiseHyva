@@ -3,16 +3,20 @@ function Tweakwise_Hyva_Analytics(config) {
         eventsData: config.eventsData,
         bindItemClickEventsConfig: config.bindItemClickEventsConfig,
         init() {
-            let bodyData = { eventsData: this.eventsData };
 
-            fetch('/tweakwise/ajax/analytics', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(bodyData)
-            }).catch(error => console.error('Tweakwise API call failed:', error));
+            if (config.eventsData) {
+                let bodyData = { eventsData: this.eventsData };
+
+                fetch('/tweakwise/ajax/analytics', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify(bodyData)
+                }).catch(error => console.error('Tweakwise API call failed:',
+                    error));
+            }
 
             // bindItemClickEvents
             if (this.bindItemClickEventsConfig) {
@@ -34,22 +38,18 @@ function Tweakwise_Hyva_Analytics(config) {
 }
 
 function handleItemClick(event, config) {
-    if (!this.analyticsEvents) {
-        return;
-    }
-
-    const productList = document.querySelector(this.productListSelector);
+    const productList = document.querySelector(config.productListSelector);
     if (!productList) {
         return;
     }
 
     productList.addEventListener('click', (event) => {
         try {
-            if (!this.twRequestId) {
+            if (!config.twRequestId) {
                 return;
             }
 
-            const product = event.target.closest(this.productSelector);
+            const product = event.target.closest(config.productSelector);
             let productId;
 
             if (product) {
@@ -73,7 +73,7 @@ function handleItemClick(event, config) {
             }
 
             // Send async fetch request to the analytics endpoint
-            fetch(this.analyticsEndpoint, {
+            fetch(config.analyticsEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +84,7 @@ function handleItemClick(event, config) {
                         {
                             type: 'itemclick',
                             value: productId,
-                            requestId: this.twRequestId
+                            requestId: config.twRequestId
                         }
                     ],
                 })

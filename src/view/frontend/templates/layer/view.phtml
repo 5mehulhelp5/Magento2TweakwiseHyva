@@ -207,6 +207,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                     let noItems = this.$refs.search_no_results;
                     let moreItems = this.$refs.moreItems;
                     let lessItems = this.$refs.lessItems;
+                    let self = this;
 
                     //swatch
                     if (!items || !items.children) {
@@ -223,7 +224,7 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                         if (value.length === 0) {
                             // Reset to initial state
                             item.style.display = '';
-                        } else if (input.value.toLowerCase().trim().indexOf(value) === -1) {
+                        } else if (self.asciiFold(input.value).indexOf(self.asciiFold(value)) === -1) {
                             item.style.display = 'none';
                         } else {
                             item.style.display = 'block';
@@ -246,6 +247,25 @@ $filtered = count($block->getLayer()->getState()->getFilters());
                             lessItems.style.display = 'none';
                         }
                     }
+                },
+                asciiFold(value) {
+                    const SPECIAL_MAP = {
+                        'ß': 'ss', 'Æ': 'AE', 'æ': 'ae', 'Ø': 'O', 'ø': 'o', 'Œ': 'OE', 'œ': 'oe',
+                        'Þ': 'Th', 'þ': 'th', 'Đ': 'D', 'đ': 'd', 'Ł': 'L', 'ł': 'l', 'Ħ': 'H', 'ħ': 'h'
+                    };
+                    const SPECIAL_REGEX = new RegExp(Object.keys(SPECIAL_MAP).join('|'), 'g');
+                    if (typeof value.normalize === 'function') {
+                        return value.normalize('NFKD')
+                            .replace(/\p{M}/gu, '')
+                            .replace(SPECIAL_REGEX, ch => SPECIAL_MAP[ch])
+                            .normalize('NFC')
+                            .toLowerCase()
+                            .trim();
+                    }
+                    // Fallback: just replace special chars and lowercase
+                    return value.replace(SPECIAL_REGEX, ch => SPECIAL_MAP[ch])
+                        .toLowerCase()
+                        .trim();
                 }
             }
         }

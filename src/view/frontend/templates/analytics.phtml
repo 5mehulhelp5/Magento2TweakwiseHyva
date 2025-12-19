@@ -4,18 +4,30 @@
 /** @var  Escaper $escaper */
 
 use Magento\Framework\Escaper;
+use Tweakwise\Magento2Tweakwise\Model\NavigationConfig;
 
 /** @var \Tweakwise\Magento2Tweakwise\ViewModel\PersonalMerchandisingAnalytics $viewModel */
 $viewModel = $block->getData('viewModel');
 $analyticsTypes = $block->getData('analyticsTypes');
 $eventsData = $viewModel->getEventsData($analyticsTypes);
+
+/** @var NavigationConfig $tweakwiseNavigationConfig */
+$tweakwiseNavigationConfig = $block->getData('tweakwise_navigation_config');
+$jsFormConfig = $tweakwiseNavigationConfig ? json_decode($tweakwiseNavigationConfig->getJsFormConfig()) : [];
 ?>
 
 <div x-data='{
-    eventsData: <?= $eventsData ?>
+    eventsData: <?= $eventsData ?>,
+    bindItemClickEventsConfig: {
+        productListSelector: ".products.wrapper",
+        productSelector: ".product-item",
+        analyticsEndpoint: "<?= /* @noEscape */ $jsFormConfig->tweakwiseNavigationForm->analyticsEndpoint ?? ''; ?>",
+        twRequestId: "<?= $escaper->escapeHtmlAttr($jsFormConfig->tweakwiseNavigationForm->twRequestId ?? ''); ?>"
+    }
 }' x-init='() => {
     Tweakwise_Hyva_Analytics({
-        eventsData: eventsData
+        eventsData: eventsData,
+        bindItemClickEventsConfig: bindItemClickEventsConfig
     }).init();
 }'>
 </div>
